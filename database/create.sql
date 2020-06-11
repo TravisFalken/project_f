@@ -236,13 +236,165 @@ CREATE TABLE _direct_debit_type
 );
 
 /*-----------------------------------------------------------------------
+    Create Direct Debit Record Table
+-------------------------------------------------------------------------*/
+
+CREATE TABLE _direct_debit_record
+(
+    direct_debit_record_id serial NOT NULL,
+    direct_debit_record_title character varying(55) NOT NULL,
+    direct_debit_record_description character varying(255),
+    total_amount_before_payment money NOT NULL,
+    total_paid money NOT NULL,
+    debit_record_created date NOT NULL,
+    debit_record_last_updated date,
+    direct_debit_id integer NOT NULL,
+    interest_rate real,
+    timeframe_id integer NOT NULL,
+    payment_day_id integer NOT NULL,
+    owner integer NOT NULL,
+    user_confirmed boolean NOT NULL,
+    direct_debit_type_id integer NOT NULL,
+    payment_to character varying(55),
+    PRIMARY KEY (direct_debit_record_id)
+);
+
+/*-----------------------------------------------------------------------
     Create Direct Debit Photo Table
 ------------------------------------------------------------------------*/
 
 CREATE TABLE _direct_debit_photo
 (
-    direct_debit_id integer NOT NULL,
+    direct_debit_record_id integer NOT NULL,
     photo_path character varying(255) NOT NULL,
     PRIMARY KEY (direct_debit_id, photo_path)
 );
 
+
+/*--------------------------------------------------
+    Create Deposit Tabel
+---------------------------------------------------*/
+
+CREATE TABLE _deposit
+(
+    deposit_id serial NOT NULL,
+    deposit_amount money NOT NULL,
+    owner integer NOT NULL,
+    deposit_title character varying(55) NOT NULL,
+    deposit_description character varying(255),
+    payee character varying(55),
+    deposit_recieved_date date NOT NULL,
+    deposit_last_updated date,
+    account_id integer NOT NULL,
+    deposit_type_id integer NOT NULL,
+    PRIMARY KEY (deposit_id)
+);
+
+/*----------------------------------------------
+    Create Deposit Type Table
+-----------------------------------------------*/
+
+CREATE TABLE _deposit_type
+(
+    deposit_type_id serial NOT NULL,
+    deposit_type character varying(55) NOT NULL,
+    deposit_type_description character varying(255) NOT NULL,
+    PRIMARY KEY (deposit_type_id)
+);
+
+/*---------------------------------------------------
+    Create deposit photo table
+----------------------------------------------------*/
+
+CREATE TABLE _deposit_photo
+(
+    deposit_id integer NOT NULL,
+    photo_path character varying(255) NOT NULL,
+    PRIMARY KEY (deposit_id, photo_path)
+);
+
+
+/*------------------------------------------------------
+    Create direct credit table
+------------------------------------------------------*/
+
+CREATE TABLE _direct_credit
+(
+    direct_credit_id serial NOT NULL,
+    direct_credit_amount money NOT NULL,
+    owner integer NOT NULL,
+    total_amount_recieved money NOT NULL,
+    direct_credit_title character varying(55) NOT NULL,
+    direct_credit_description character varying(255),
+    direct_credit_type_id integer NOT NULL,
+    account_id integer NOT NULL,
+    timeframe_id integer NOT NULL,
+    payment_day_id integer NOT NULL,
+    direct_credit_created_date date NOT NULL,
+    direct_credit_last_updated date,
+    payee character varying(55),
+    PRIMARY KEY (direct_credit_id)
+);
+
+/*----------------------------------------
+    Create direct credit type table
+-----------------------------------------*/
+
+CREATE TABLE _direct_credit_type
+(
+    direct_credit_type_id serial NOT NULL,
+    direct_credit_type character varying(55) NOT NULL,
+    direct_credit_type_description character varying(255) NOT NULL,
+    PRIMARY KEY (direct_credit_type_id)
+);
+
+/*-----------------------------------------------
+    Create direct credit record table
+------------------------------------------------*/
+
+CREATE TABLE _direct_credit_record
+(
+    direct_credit_record_id serial NOT NULL,
+    amount_recieved money NOT NULL,
+    owner integer NOT NULL,
+    direct_credit_id integer NOT NULL,
+    direct_credit_record_title character varying(55) NOT NULL,
+    direct_credit_record_description character varying(255),
+    recieved_payment_date date NOT NULL,
+    direct_credit_record_last_updated date,
+    direct_credit_type_id integer NOT NULL,
+    timeframe_id integer NOT NULL,
+    payment_day_id integer NOT NULL,
+    user_comfired_payment boolean NOT NULL,
+    direct_credit_record_payee character varying(55),
+    PRIMARY KEY (direct_credit_record_id)
+);
+
+
+/*------------------------------------------------
+    Create direct credit record photo
+-------------------------------------------------*/
+
+CREATE TABLE _direct_credit_record_photo
+(
+    direct_credit_record_id integer NOT NULL,
+    photo_path character varying(255) NOT NULL,
+    PRIMARY KEY (direct_credit_record_id, photo_path)
+);
+
+
+/*---------------------------------------------------
+    Create Saving Goal Table
+----------------------------------------------------*/
+
+CREATE TABLE _saving_goal
+(
+    saving_goal_id serial NOT NULL,
+    account_id integer NOT NULL,
+    amount_saved money NOT NULL,
+    saving_goal money NOT NULL,
+    saving_goal_title character varying(55) NOT NULL,
+    saving_goal_description character varying(255),
+    timeframe_id integer NOT NULL,
+    PRIMARY KEY (saving_goal_id)
+);
