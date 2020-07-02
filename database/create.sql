@@ -8,6 +8,8 @@ CREATE EXTENSION postgis;
 /*--------------------------------------------------------------
     Create User Table
 --------------------------------------------------------------*/
+DROP TABLE IF EXISTS _user
+CASCADE;
 
 CREATE TABLE _user
 (
@@ -29,6 +31,9 @@ CREATE TABLE _user
     Create Address Table
 -------------------------------------------------------------*/
 
+DROP TABLE IF EXISTS _address
+CASCADE;
+
 CREATE TABLE _address
 (
     address_id serial NOT NULL,
@@ -47,17 +52,22 @@ CREATE TABLE _address
 /*--------------------------------------------------------------
     Create Location Table
 ---------------------------------------------------------------*/
+DROP TABLE IF EXISTS _location
+CASCADE;
 
 CREATE TABLE _location
 (
     location_id serial NOT NULL,
-    location geometry NOT NULL
+    location geometry NOT NULL,
+    PRIMARY KEY(location_id)
 );
 
 
 /*-----------------------------------------------------------------
     Create User Account Table || Joins user and the account tables
 -------------------------------------------------------------------*/
+DROP TABLE IF EXISTS _user_account
+CASCADE;
 
 CREATE TABLE _user_account
 (
@@ -70,6 +80,8 @@ CREATE TABLE _user_account
 /*----------------------------------------------------------------
     Create Account Table
 -----------------------------------------------------------------*/
+DROP TABLE IF EXISTS _account
+CASCADE;
 
 CREATE TABLE _account
 (
@@ -87,6 +99,8 @@ CREATE TABLE _account
 /*----------------------------------------------------------------
     Create Salary Table
 ----------------------------------------------------------------*/
+DROP TABLE IF EXISTS _salary
+CASCADE;
 
 CREATE TABLE _salary
 (
@@ -106,6 +120,8 @@ CREATE TABLE _salary
 /*----------------------------------------------------------------
     Create Salary Record Table
 -----------------------------------------------------------------*/
+DROP TABLE IF EXISTS _salary_record
+CASCADE;
 
 CREATE TABLE _salary_record
 (
@@ -125,6 +141,8 @@ CREATE TABLE _salary_record
 /*-----------------------------------------------------------------
     Create Timeframe Table
 ------------------------------------------------------------------*/
+DROP TABLE IF EXISTS _timeframe
+CASCADE;
 
 CREATE TABLE _timeframe
 (
@@ -138,6 +156,8 @@ CREATE TABLE _timeframe
 /*---------------------------------------------------------------
     Create Payment Day Table
 ----------------------------------------------------------------*/
+DROP TABLE IF EXISTS _payment_day
+CASCADE;
 
 CREATE TABLE _payment_day
 (
@@ -150,6 +170,8 @@ CREATE TABLE _payment_day
 /*-------------------------------------------------------------
     Create Expense Table
 --------------------------------------------------------------*/
+DROP TABLE IF EXISTS _expense
+CASCADE;
 
 CREATE TABLE _expense
 (
@@ -170,6 +192,9 @@ CREATE TABLE _expense
 /*------------------------------------------------------------------
     Create Expense Type Table
 -------------------------------------------------------------------*/
+DROP TABLE IF EXISTS _expense_type
+CASCADE;
+
 CREATE TABLE _expense_type
 (
     expense_type_id serial NOT NULL,
@@ -181,6 +206,8 @@ CREATE TABLE _expense_type
 /*---------------------------------------------------------------------
     Create Expense Photo
 ----------------------------------------------------------------------*/
+DROP TABLE IF EXISTS _expense_photo
+CASCADE;
 
 CREATE TABLE _expense_photo
 (
@@ -192,17 +219,21 @@ CREATE TABLE _expense_photo
 /*------------------------------------------------------------------------
     Create Photo
 -------------------------------------------------------------------------*/
+DROP TABLE IF EXISTS _photo
+CASCADE;
 
 CREATE TABLE _photo
 (
-    path character varying(255) NOT NULL,
+    photo_path character varying(255) NOT NULL,
     photo_description character varying(255),
-    PRIMARY KEY (path)
+    PRIMARY KEY (photo_path)
 );
 
 /*------------------------------------------------------------------------
     Create Direct Debit Table
 -------------------------------------------------------------------------*/
+DROP TABLE IF EXISTS _direct_debit
+CASCADE;
 
 CREATE TABLE _direct_debit
 (
@@ -217,7 +248,7 @@ CREATE TABLE _direct_debit
     direct_debit_last_update date,
     timeframe_id integer NOT NULL,
     payment_day_id integer NOT NULL,
-    direct_debit_type integer NOT NULL,
+    direct_debit_type_id integer NOT NULL,
     account_id integer NOT NULL,
     user_confirmed boolean NOT NULL DEFAULT FALSE,
     PRIMARY KEY (direct_debit_id)
@@ -226,6 +257,8 @@ CREATE TABLE _direct_debit
 /*-----------------------------------------------------------------------
     Create Direct Debit Type
 ------------------------------------------------------------------------*/
+DROP TABLE IF EXISTS _direct_debit_type
+CASCADE;
 
 CREATE TABLE _direct_debit_type
 (
@@ -238,6 +271,8 @@ CREATE TABLE _direct_debit_type
 /*-----------------------------------------------------------------------
     Create Direct Debit Record Table
 -------------------------------------------------------------------------*/
+DROP TABLE IF EXISTS _direct_debit_record
+CASCADE;
 
 CREATE TABLE _direct_debit_record
 (
@@ -262,18 +297,22 @@ CREATE TABLE _direct_debit_record
 /*-----------------------------------------------------------------------
     Create Direct Debit Photo Table
 ------------------------------------------------------------------------*/
+DROP TABLE IF EXISTS _direct_debit_photo
+CASCADE;
 
 CREATE TABLE _direct_debit_photo
 (
     direct_debit_record_id integer NOT NULL,
     photo_path character varying(255) NOT NULL,
-    PRIMARY KEY (direct_debit_id, photo_path)
+    PRIMARY KEY (direct_debit_record_id, photo_path)
 );
 
 
 /*--------------------------------------------------
     Create Deposit Tabel
 ---------------------------------------------------*/
+DROP TABLE IF EXISTS _deposit
+CASCADE;
 
 CREATE TABLE _deposit
 (
@@ -293,6 +332,8 @@ CREATE TABLE _deposit
 /*----------------------------------------------
     Create Deposit Type Table
 -----------------------------------------------*/
+DROP TABLE IF EXISTS _deposit_type
+CASCADE;
 
 CREATE TABLE _deposit_type
 (
@@ -305,6 +346,8 @@ CREATE TABLE _deposit_type
 /*---------------------------------------------------
     Create deposit photo table
 ----------------------------------------------------*/
+DROP TABLE IF EXISTS _deposit_photo
+CASCADE;
 
 CREATE TABLE _deposit_photo
 (
@@ -317,6 +360,8 @@ CREATE TABLE _deposit_photo
 /*------------------------------------------------------
     Create direct credit table
 ------------------------------------------------------*/
+DROP TABLE IF EXISTS _direct_credit
+CASCADE;
 
 CREATE TABLE _direct_credit
 (
@@ -339,6 +384,8 @@ CREATE TABLE _direct_credit
 /*----------------------------------------
     Create direct credit type table
 -----------------------------------------*/
+DROP TABLE IF EXISTS _direct_credit_type
+CASCADE;
 
 CREATE TABLE _direct_credit_type
 (
@@ -351,6 +398,8 @@ CREATE TABLE _direct_credit_type
 /*-----------------------------------------------
     Create direct credit record table
 ------------------------------------------------*/
+DROP TABLE IF EXISTS _direct_credit_record
+CASCADE;
 
 CREATE TABLE _direct_credit_record
 (
@@ -374,6 +423,8 @@ CREATE TABLE _direct_credit_record
 /*------------------------------------------------
     Create direct credit record photo
 -------------------------------------------------*/
+DROP TABLE IF EXISTS _direct_credit_record_photo
+CASCADE;
 
 CREATE TABLE _direct_credit_record_photo
 (
@@ -386,6 +437,8 @@ CREATE TABLE _direct_credit_record_photo
 /*---------------------------------------------------
     Create Saving Goal Table
 ----------------------------------------------------*/
+DROP TABLE IF EXISTS _saving_goal
+CASCADE;
 
 CREATE TABLE _saving_goal
 (
@@ -550,7 +603,7 @@ CONSTRAINT fk_payment_day_id FOREIGN KEY(payment_day_id) REFERENCES _payment_day
 
 --Direct debit type id foreign key
 ALTER TABLE _direct_debit ADD
-CONSTRAINT fk_direct_debit_type_id FOREIGN KEY(direct_debit_type_id) REFERENCES _direct_debit_type(direct_debit_id);
+CONSTRAINT fk_direct_debit_type_id FOREIGN KEY(direct_debit_type_id) REFERENCES _direct_debit_type(direct_debit_type_id);
 
 --Owner id foreign key
 ALTER TABLE _direct_debit ADD
@@ -576,7 +629,7 @@ CONSTRAINT fk_payment_day_id FOREIGN KEY(payment_day_id) REFERENCES _payment_day
 
 --Direct debit type id foreign key
 ALTER TABLE _direct_debit_record ADD
-CONSTRAINT fk_direct_debit_type_id FOREIGN KEY(direct_debit_type_id) REFERENCES _direct_debit_type(direct_debit_id);
+CONSTRAINT fk_direct_debit_type_id FOREIGN KEY(direct_debit_type_id) REFERENCES _direct_debit_type(direct_debit_type_id);
 
 --Owner id foreign key
 ALTER TABLE _direct_debit_record ADD
