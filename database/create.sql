@@ -111,7 +111,6 @@ CREATE TABLE _salary_record
 (
     salary_record_id serial NOT NULL,
     salary_recorded_amount money NOT NULL,
-    salary_record_owner integer NOT NULL,
     salary_id integer NOT NULL,
     salary_recieved_date date NOT NULL,
     record_last_updated date NOT NULL,
@@ -140,7 +139,7 @@ CREATE TABLE _timeframe
     Create Payment Day Table
 ----------------------------------------------------------------*/
 
-CREATE TABLE payment_day
+CREATE TABLE _payment_day
 (
     payment_day_id serial NOT NULL,
     payment_day character varying(30) NOT NULL,
@@ -211,6 +210,7 @@ CREATE TABLE _direct_debit
     direct_debit_title character varying(55) NOT NULL,
     direct_debit_description character varying(255),
     total_amount money NOT NULL,
+    owner integer NOT NULL,
     amount_remaining money NOT NULL,
     interest_rate real NOT NULL,
     direct_debit_date_created date NOT NULL,
@@ -398,3 +398,321 @@ CREATE TABLE _saving_goal
     timeframe_id integer NOT NULL,
     PRIMARY KEY (saving_goal_id)
 );
+
+
+
+/*====================================================================
+      
+        Alter The Database Tables
+
+======================================================================*/
+
+/*----------------------------------------
+    Alter the user table
+------------------------------------------*/
+
+--Address foreign key
+ALTER TABLE _user ADD
+CONSTRAINT fk_address_id FOREIGN KEY(address_id) REFERENCES _address(address_id)
+ON DELETE CASCADE;
+
+--photo foreign key
+ALTER TABLE _user ADD
+CONSTRAINT fk_profile_photo FOREIGN KEY(profile_photo) REFERENCES _photo(photo_path)
+ON DELETE CASCADE;
+
+
+/*--------------------------------------------------
+    Alter the address table
+---------------------------------------------------*/
+
+-- location foreign key
+ALTER TABLE _address ADD
+CONSTRAINT fk_location_id FOREIGN KEY(location_id) REFERENCES _location(location_id)
+ON DELETE CASCADE;
+
+
+/*-------------------------------------------------
+    Alter the user account table
+--------------------------------------------------*/
+
+--user id foreign key
+ALTER TABLE _user_account ADD
+CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES _user(user_id)
+ON DELETE CASCADE;
+
+--account id foreign key
+ALTER TABLE _account ADD
+CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES _account(account_id);
+
+
+/*----------------------------------------------
+    Alter the account table
+-----------------------------------------------*/
+
+--Owner foreign key
+ALTER TABLE _account ADD
+CONSTRAINT fk_owner FOREIGN KEY(owner) REFERENCES _user(user_id)
+ON DELETE CASCADE;
+
+
+/*-------------------------------------------
+    Alter the salary table
+--------------------------------------------*/
+
+--Salary owner foreign key
+ALTER TABLE _salary ADD
+CONSTRAINT fk_salary_owner FOREIGN KEY(salary_owner) REFERENCES _user(user_id)
+ON DELETE CASCADE;
+
+--Payment day foreign key
+ALTER TABLE _salary ADD
+CONSTRAINT fk_payment_day_id FOREIGN KEY(payment_day_id) REFERENCES _payment_day(payment_day_id);
+
+--Account id foreign key
+ALTER TABLE _salary ADD
+CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES _account(account_id)
+ON DELETE CASCADE;
+
+--Timeframe id foreign key
+ALTER TABLE _salary ADD
+CONSTRAINT fk_timeframe_id FOREIGN KEY(time_frame_id) REFERENCES _timeframe(timeframe_id);
+
+
+/*-------------------------------------------------------------
+    Alter the salary record table
+-------------------------------------------------------------*/
+
+--Salary ID foreign key
+ALTER TABLE _salary_record ADD
+CONSTRAINT fk_salary_id FOREIGN KEY(salary_id) REFERENCES _salary(salary_id)
+ON DELETE CASCADE;
+
+--time frame foreign key
+ALTER TABLE _salary_record ADD
+CONSTRAINT fk_time_frame_id FOREIGN KEY(salary_record_timeframe_id) REFERENCES _timeframe(timeframe_id);
+
+--payment day foreign key
+ALTER TABLE _salary_record ADD
+CONSTRAINT fk_payment_day_id FOREIGN KEY(salary_record_payment_day_id) REFERENCES _payment_day(payment_day_id);
+
+--Salary owner id foreign key
+ALTER TABLE _salary_record ADD
+CONSTRAINT fk_owner_id FOREIGN KEY(salary_owner) REFERENCES _user(user_id)
+ON DELETE CASCADE;
+
+
+/*-------------------------------------------------------------
+    Alter the expense table
+------------------------------------------------------------*/
+
+--Expense owner id foreign key
+ALTER TABLE _expense ADD
+CONSTRAINT fk_expense_owner FOREIGN KEY(expense_owner) REFERENCES _user(user_id)
+ON DELETE CASCADE;
+
+--Expense type id foreign key
+ALTER TABLE _expense ADD
+CONSTRAINT fk_expense_type FOREIGN KEY(expense_type) REFERENCES _expense_type(expense_type_id);
+
+--Account id foreign key
+ALTER TABLE _expense ADD
+CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES _account(account_id)
+ON DELETE CASCADE;
+
+
+/*---------------------------------------------------------------
+    Alter Expense Photo Table
+--------------------------------------------------------------*/
+
+--Expense id foreign key
+ALTER TABLE _expense_photo ADD
+CONSTRAINT fk_expense_id FOREIGN KEY(expense_id) REFERENCES _expense(expense_id)
+ON DELETE CASCADE;
+
+--Photo path foreign key
+ALTER TABLE _expense_photo ADD
+CONSTRAINT fk_photo_path FOREIGN KEY(photo_path) REFERENCES _photo(photo_path)
+ON DELETE CASCADE;
+
+
+/*-------------------------------------------------------------
+    Alter Direct Debit Table
+--------------------------------------------------------------*/
+
+--Timeframe id foreign key
+ALTER TABLE _direct_debit ADD
+CONSTRAINT fk_timeframe_id FOREIGN KEY(timeframe_id) REFERENCES _timeframe(timeframe_id);
+
+--Payment day id foreign key
+ALTER TABLE _direct_debit ADD
+CONSTRAINT fk_payment_day_id FOREIGN KEY(payment_day_id) REFERENCES _payment_day(payment_day_id);
+
+--Direct debit type id foreign key
+ALTER TABLE _direct_debit ADD
+CONSTRAINT fk_direct_debit_type_id FOREIGN KEY(direct_debit_type_id) REFERENCES _direct_debit_type(direct_debit_id);
+
+--Owner id foreign key
+ALTER TABLE _direct_debit ADD
+CONSTRAINT fk_owner FOREIGN KEY(owner) REFERENCES _user(user_id);
+
+--Account ID foreign key
+ALTER TABLE _direct_debit ADD
+CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES _account(account_id)
+ON DELETE CASCADE;
+
+/*-----------------------------------------------------------------
+    ALTER the direct debit record table
+----------------------------------------------------------------*/
+
+
+--Timeframe id foreign key
+ALTER TABLE _direct_debit_record ADD
+CONSTRAINT fk_timeframe_id FOREIGN KEY(timeframe_id) REFERENCES _timeframe(timeframe_id);
+
+--Payment day id foreign key
+ALTER TABLE _direct_debit_record ADD
+CONSTRAINT fk_payment_day_id FOREIGN KEY(payment_day_id) REFERENCES _payment_day(payment_day_id);
+
+--Direct debit type id foreign key
+ALTER TABLE _direct_debit_record ADD
+CONSTRAINT fk_direct_debit_type_id FOREIGN KEY(direct_debit_type_id) REFERENCES _direct_debit_type(direct_debit_id);
+
+--Owner id foreign key
+ALTER TABLE _direct_debit_record ADD
+CONSTRAINT fk_owner FOREIGN KEY(owner) REFERENCES _user(user_id);
+
+--direct debit ID foreign key
+ALTER TABLE _direct_debit_record ADD
+CONSTRAINT fk_direct_debit_id FOREIGN KEY(direct_debit_id) REFERENCES _direct_debit(direct_debit_id)
+ON DELETE CASCADE;
+
+
+/*--------------------------------------------------------------
+    Alter Direct Debit Photo Table
+----------------------------------------------------------------*/
+
+--direct debit record id foreign key
+ALTER TABLE _direct_debit_photo ADD
+CONSTRAINT fk_direct_debit_record_id FOREIGN KEY(direct_debit_record_id) REFERENCES _direct_debit_record(direct_debit_record_id)
+ON DELETE CASCADE;
+
+--photo path foreign key
+ALTER TABLE _direct_debit_photo ADD
+CONSTRAINT fk_photo_path FOREIGN KEY(photo_path) REFERENCES _photo(photo_path)
+ON DELETE CASCADE;
+
+
+/*-------------------------------------------------------
+    ALTER Deposit table
+------------------------------------------------------*/
+
+--Owner foreign key
+ALTER TABLE _deposit ADD
+CONSTRAINT fk_owner FOREIGN KEY(owner) REFERENCES _user(user_id)
+ON DELETE CASCADE;
+
+--Account ID foreign key
+ALTER TABLE _deposit ADD
+CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES _account(account_id)
+ON DELETE CASCADE;
+
+--Deposit type id foreign key
+ALTER TABLE _deposit ADD
+CONSTRAINT fk_deposit_type_id FOREIGN KEY(deposit_type_id) REFERENCES _deposit_type(deposit_type_id);
+
+/*------------------------------------------------------------------
+    ALTER Deposit Photo Table
+------------------------------------------------------------------*/
+
+--Deposit id foreign key
+ALTER TABLE _deposit_photo ADD
+CONSTRAINT fk_deposit_id FOREIGN KEY(deposit_id) REFERENCES _deposit(deposit_id)
+ON DELETE CASCADE;
+
+--Photo Path foreign key
+ALTER TABLE _deposit_photo ADD
+CONSTRAINT fk_photo_path FOREIGN KEY(photo_path) REFERENCES _photo(photo_path)
+ON DELETE CASCADE;
+
+
+/*--------------------------------------------------
+    Alter direct credit table
+---------------------------------------------------*/
+
+--Owner foreign key
+ALTER TABLE _direct_credit ADD
+CONSTRAINT fk_owner FOREIGN KEY(owner) REFERENCES _user(user_id)
+ON DELETE CASCADE;
+
+--Direct credit type id foreign key
+ALTER TABLE _direct_credit ADD
+CONSTRAINT fk_direct_credit_type_id FOREIGN KEY(direct_credit_type_id) REFERENCES _direct_credit_type(direct_credit_type_id);
+
+--Account id foreign key
+ALTER TABLE _direct_credit ADD
+CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES _account(account_id)
+ON DELETE CASCADE;
+
+--Timeframe foreign key
+ALTER TABLE _direct_credit ADD
+CONSTRAINT fk_timeframe_id FOREIGN KEY(timeframe_id) REFERENCES _timeframe(timeframe_id);
+
+--Payment day foreign key
+ALTER TABLE _direct_credit ADD
+CONSTRAINT fk_payment_day FOREIGN KEY(payment_day_id) REFERENCES _payment_day(payment_day_id);
+
+
+/*------------------------------------------------------------------
+   Alter  _direct_credit_record Table
+-------------------------------------------------------------------*/
+
+--Owner foreign key
+ALTER TABLE _direct_credit_record ADD
+CONSTRAINT fk_owner FOREIGN KEY(owner) REFERENCES _user(user_id)
+ON DELETE CASCADE;
+
+--Direct credit type id foreign key
+ALTER TABLE _direct_credit_record ADD
+CONSTRAINT fk_direct_credit_type_id FOREIGN KEY(direct_credit_type_id) REFERENCES _direct_credit_type(direct_credit_type_id);
+
+--direct credit id foreign key
+ALTER TABLE _direct_credit_record ADD
+CONSTRAINT fk_direct_credit_id FOREIGN KEY(direct_credit_id) REFERENCES _direct_credit(direct_credit_id)
+ON DELETE CASCADE;
+
+--Timeframe foreign key
+ALTER TABLE _direct_credit_record ADD
+CONSTRAINT fk_timeframe_id FOREIGN KEY(timeframe_id) REFERENCES _timeframe(timeframe_id);
+
+--Payment day foreign key
+ALTER TABLE _direct_credit_record ADD
+CONSTRAINT fk_payment_day FOREIGN KEY(payment_day_id) REFERENCES _payment_day(payment_day_id);
+
+/*---------------------------------------------------------
+   Alter _direct_credit_record_photo Table
+------------------------------------------------------------*/
+
+-- Direct credit record id foreign key
+ALTER TABLE _direct_credit_record_photo ADD
+CONSTRAINT fk_direct_credit_record_id FOREIGN KEY(direct_credit_record_id) REFERENCES _direct_credit_record(direct_credit_record_id)
+ON DELETE CASCADE;
+
+--Photo path foreign key
+ALTER TABLE _direct_credit_record_photo ADD
+CONSTRAINT fk_photo_path FOREIGN KEY(photo_path) REFERENCES _photo(photo_path)
+ON DELETE CASCADE;
+
+
+/*-----------------------------------------------------------
+   Alter _saving_goal Table
+------------------------------------------------------------*/
+
+-- Account id foreign key
+ALTER TABLE _saving_goal ADD
+CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES _account(account_id)
+ON DELETE CASCADE;
+
+-- Timeframe id foreign key
+ALTER TABLE _saving_goal ADD
+CONSTRAINT fk_timeframe_id FOREIGN KEY(timeframe_id) REFERENCES _timeframe(timeframe_id);
