@@ -5,6 +5,7 @@ const Location = require('../models/Location');
 const geoLocation = require('../utils/geoLocation');
 const userQueries = require('../queries/userQueries');
 const bcrypt = require('../utils/bcrypt');
+const Account = require('../models/Account');
 
 //@desc     Creates a new user in the database
 //@route    /api/v1/users
@@ -63,7 +64,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
     phoneNum,
     password
   );
-
+  
   //Encrypt password
   user.setPassword(await bcrypt.encryptString(password));
 
