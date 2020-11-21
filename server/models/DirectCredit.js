@@ -108,3 +108,5 @@ class DirectCredit extends RecurringItem {
     });
   }
 }
+
+module.exports = DirectCredit;

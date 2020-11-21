@@ -414,7 +414,7 @@ CREATE TABLE _direct_credit_record
     direct_credit_type_id integer NOT NULL,
     timeframe_id integer NOT NULL,
     payment_day_id integer NOT NULL,
-    user_comfired_payment boolean NOT NULL,
+    user_comfirmed_payment boolean NOT NULL,
     direct_credit_record_payee character varying(55),
     PRIMARY KEY (direct_credit_record_id)
 );
