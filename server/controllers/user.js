@@ -78,3 +78,21 @@ exports.createUser = asyncHandler(async (req, res, next) => {
     },
   });
 });
+
+//@desc   Updates the password of a user
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+  const {
+    currentPassword,
+    newPassword,
+    retypedNewPassword
+  } = req.body;
+
+  let response = await userQueries.updatePasswordQuery(req.user.userID, currentPassword, newPassword, retypedNewPassword);
+
+  res.status(200).json({
+    success: true,
+    data: {
+      response
+    }
+  })
+});

@@ -17,6 +17,19 @@ const encryptString = async (string) => {
   });
 };
 
+//@desc   Checks if passwords match
+const checkPasswordMatch = async (dbPassword, enteredPassword) => {
+  return new Promise(async (resolve, reject) => {
+    try{
+      const isMatch = await bcrypt.compare(enteredPassword, dbPassword);
+      resolve(isMatch); 
+    }catch(e){
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   encryptString,
+  checkPasswordMatch
 };

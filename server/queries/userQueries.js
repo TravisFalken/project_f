@@ -1,4 +1,6 @@
 const db = require('../config/database_config');
+const bcrypt = require('../utils/bcrypt');
+const ErrorResponse = require('../utils/ErrorResponse');
 const addressQueries = require('./addressQueries');
 
 //@desc     Adds a new user to the database
@@ -70,6 +72,62 @@ const addUserQuery = async (newUser) => {
   });
 };
 
+const updatePasswordQuery = async (userID, password, newPassword, retypedNewPassword) => {
+  
+  return new Promise(async (resolve, reject) => {
+    try{
+      let user = getUserQuery(userID);
+      if(!user){
+        reject(e);
+      }
+
+      if(!bcrypt.checkPasswordMatch(user.password, password)){
+        reject(new ErrorResponse('Password does not match', 400));
+      }
+
+      if(!newPassword === retypedNewPassword){
+        reject(new ErrorResponse('New password does not match retyped password', 400));
+      }
+
+      const newEncryptedPassword = bcrypt.encryptString(newPassword);
+
+      let response = db.query(` UPDATE _user
+                                SET password = $1
+                                WHERE user_id = $2;`
+                              , [newEncryptedPassword, userID]);
+      resolve(response);
+    }catch(e){
+      reject(e);
+    }
+  });
+}
+
+const getUserQuery = async (userID) => {
+  return new Promise(async (resolve, reject) =>{
+    try{
+      let user = await db.query(` SELECT
+                                        user_id
+                                    ,   username
+                                    ,   email
+                                    ,   password
+                                    ,   given_name
+                                    ,   family_name
+                                    ,   phone_num
+                                    ,   date_of_birth
+                                    ,   created_date
+                                    ,   address_id
+                                    ,   profile_photo
+                                  WHERE user_id = $1;`
+                                  , [userID]);
+      resolve(user);
+    }catch(e){
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   addUserQuery,
+  getUserQuery,
+  updatePasswordQuery
 };
